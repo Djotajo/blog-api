@@ -15,12 +15,13 @@ const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const expressSession = require("express-session");
-const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
+// const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("@prisma/client");
 
-app.use(express.static(path.join(__dirname, "public")));
-
 const indexRouter = require("./routes/indexRouter");
+const postRouter = require("./routes/postRouter");
+
+app.use(express.static(path.join(__dirname, "public")));
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -28,6 +29,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(assetsPath));
 
 app.use("/", indexRouter);
+
+app.use("/posts", postRouter);
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}`);

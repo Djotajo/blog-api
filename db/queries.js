@@ -6,6 +6,18 @@ const prisma = require("./prisma");
 //   });
 // }
 
+async function postNewAuthor(username, hashedPassword) {
+  try {
+    const author = await prisma.author.create({
+      data: { username: username, passwordHash: hashedPassword },
+    });
+    return author;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  }
+}
+
 async function postNewUser(username, hashedPassword) {
   try {
     const user = await prisma.user.create({
@@ -15,6 +27,18 @@ async function postNewUser(username, hashedPassword) {
   } catch (error) {
     console.error("Database error:", error);
     throw error;
+  }
+}
+
+async function getAuthor(username) {
+  try {
+    const author = await prisma.author.findUnique({
+      where: { username: username },
+    });
+    return author;
+  } catch (error) {
+    console.error("Database error:", error);
+    return { success: false, error };
   }
 }
 
@@ -30,114 +54,85 @@ async function getUser(username) {
   }
 }
 
-async function getUserById(id) {
+// async function getUserById(id) {
+//   try {
+//     const user = await prisma.user.findUnique({
+//       where: { id: id },
+//     });
+//     return user;
+//   } catch (error) {
+//     console.error("Database error:", error);
+//     return { success: false, error };
+//   }
+// }
+
+async function getPostsByAuthor(username) {
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: id },
+    const author = await prisma.author.findUnique({
+      where: { username: username },
+      include: { Post: true },
     });
-    return user;
-  } catch (error) {
-    console.error("Database error:", error);
-    return { success: false, error };
-  }
-}
 
-async function postRootFolder(userId) {
-  try {
-    await prisma.folder.create({
-      data: {
-        title: "Root",
-        owner: { connect: { id: userId } },
-        // No parent => this is the root folder
-      },
-    });
-    return { success: true };
-  } catch (error) {
-    console.error("Database error:", error);
-    return { success: false, error };
-  }
-}
-
-async function getRootFolder(userId) {
-  try {
-    const root = await prisma.folder.findFirst({
-      where: {
-        ownerId: userId,
-        parentId: null,
-        // No parent => this is the root folder
-      },
-      include: {
-        children: true,
-        files: true,
-      },
-    });
-    console.log(root);
-    return root;
-  } catch (error) {
-    console.error("Database error:", error);
-    throw error;
-  }
-}
-
-async function postNewFolder(title, ownerId, parentId = null) {
-  try {
-    const data = {
-      title,
-      owner: { connect: { id: ownerId } },
-    };
-
-    if (parentId) {
-      data.parent = { connect: { id: parentId } };
+    if (!author) {
+      return null;
     }
 
-    await prisma.folder.create({ data });
-    return { success: true };
+    return author.Post;
   } catch (error) {
     console.error("Database error:", error);
-    return { success: false, error };
+    return { error };
   }
 }
 
-async function getFolderById(id) {
+async function getPost(postId) {
   try {
-    const folder = await prisma.folder.findUnique({
-      where: { id: id },
-      include: { children: true, files: true },
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      include: {
+        author: true,
+      },
     });
-    console.log(folder);
-    return folder;
+
+    if (!post) {
+      return null;
+    }
+
+    return post;
   } catch (error) {
     console.error("Database error:", error);
-    return { success: false, error };
+    return { error };
   }
 }
 
-async function postNewFile(title, link, uploaderId, parentId, size) {
+async function getPostComments(postId) {
   try {
-    const data = {
-      title,
-      link,
-      uploader: { connect: { id: uploaderId } },
-      parent: { connect: { id: parentId } },
-      size,
-    };
+    const comments = await prisma.comment.findMany({
+      where: { parentId: postId },
+      orderBy: { createdAt: "asc" },
+      include: {
+        commentByUser: true,
+        commentByAuthor: true,
+      },
+    });
 
-    // if (parentId) {
-    //   data.parent = { connect: { id: parentId } };
-    // }
-
-    await prisma.file.create({ data });
-    return { success: true };
+    return comments;
   } catch (error) {
     console.error("Database error:", error);
-    return { success: false, error };
+    return { error };
   }
 }
 
-async function postDeleteFile(id) {
+async function postDeletePost(postId) {
   try {
-    await prisma.file.delete({
-      where: { id: Number(id) },
+    const existingPost = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!existingPost) {
+      return { success: false, error: "Post not found" };
+    }
+    await prisma.post.delete({
+      where: { id: postId },
     });
     return { success: true };
   } catch (error) {
@@ -146,10 +141,17 @@ async function postDeleteFile(id) {
   }
 }
 
-async function postDeleteFolder(id) {
+async function postDeleteComment(commentId) {
   try {
-    await prisma.folder.delete({
-      where: { id: id },
+    const existingComment = await prisma.comment.findUnique({
+      where: { id: Number(commentId) },
+    });
+
+    if (!existingComment) {
+      return { success: false, error: "Comment not found" };
+    }
+    await prisma.comment.delete({
+      where: { id: Number(commentId) },
     });
     return { success: true };
   } catch (error) {
@@ -159,14 +161,105 @@ async function postDeleteFolder(id) {
 }
 
 module.exports = {
+  postNewAuthor,
   postNewUser,
+  getAuthor,
   getUser,
-  getUserById,
-  postRootFolder,
-  postNewFolder,
-  getRootFolder,
-  getFolderById,
-  postNewFile,
-  postDeleteFile,
-  postDeleteFolder,
+  getPostsByAuthor,
+  getPost,
+  getPostComments,
+  postDeletePost,
+  postDeleteComment,
 };
+
+// async function postRootFolder(userId) {
+//   try {
+//     await prisma.folder.create({
+//       data: {
+//         title: "Root",
+//         owner: { connect: { id: userId } },
+//         // No parent => this is the root folder
+//       },
+//     });
+//     return { success: true };
+//   } catch (error) {
+//     console.error("Database error:", error);
+//     return { success: false, error };
+//   }
+// }
+
+// async function getRootFolder(userId) {
+//   try {
+//     const root = await prisma.folder.findFirst({
+//       where: {
+//         ownerId: userId,
+//         parentId: null,
+//         // No parent => this is the root folder
+//       },
+//       include: {
+//         children: true,
+//         files: true,
+//       },
+//     });
+//     console.log(root);
+//     return root;
+//   } catch (error) {
+//     console.error("Database error:", error);
+//     throw error;
+//   }
+// }
+
+// async function postNewFolder(title, ownerId, parentId = null) {
+//   try {
+//     const data = {
+//       title,
+//       owner: { connect: { id: ownerId } },
+//     };
+
+//     if (parentId) {
+//       data.parent = { connect: { id: parentId } };
+//     }
+
+//     await prisma.folder.create({ data });
+//     return { success: true };
+//   } catch (error) {
+//     console.error("Database error:", error);
+//     return { success: false, error };
+//   }
+// }
+
+// async function getFolderById(id) {
+//   try {
+//     const folder = await prisma.folder.findUnique({
+//       where: { id: id },
+//       include: { children: true, files: true },
+//     });
+//     console.log(folder);
+//     return folder;
+//   } catch (error) {
+//     console.error("Database error:", error);
+//     return { success: false, error };
+//   }
+// }
+
+// async function postNewFile(title, link, uploaderId, parentId, size) {
+//   try {
+//     const data = {
+//       title,
+//       link,
+//       uploader: { connect: { id: uploaderId } },
+//       parent: { connect: { id: parentId } },
+//       size,
+//     };
+
+//     // if (parentId) {
+//     //   data.parent = { connect: { id: parentId } };
+//     // }
+
+//     await prisma.file.create({ data });
+//     return { success: true };
+//   } catch (error) {
+//     console.error("Database error:", error);
+//     return { success: false, error };
+//   }
+// }
