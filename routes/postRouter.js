@@ -4,7 +4,28 @@ const postRouter = Router();
 
 const db = require("../db/queries");
 
+postRouter.get("/", async (req, res) => {
+  const posts = await db.getPostsByAuthor("djo");
+  console.log("bravo legendo");
+  res.json(posts);
+});
+
+// postRouter.get("/:postId/:comments/:commentId", async (req, res) => {
+//   const post = await db.getPost("testpost");
+//   console.log("bravo legendo");
+//   res.json(post);
+// });
+
+postRouter.get("/:postId/:comments", async (req, res) => {
+  const { postId } = req.params;
+  const comments = await db.getPostComments(postId);
+  console.log("bravo legendo");
+  res.json(comments);
+});
+
 postRouter.get("/:postId", async (req, res) => {
+  const { postId } = req.params;
+  //   const post = await db.getPost(postId);
   const post = await db.getPost("testpost");
   console.log("bravo legendo");
   res.json(post);
