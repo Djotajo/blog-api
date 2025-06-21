@@ -31,6 +31,13 @@ postRouter.get("/:postId", async (req, res) => {
   res.json(post);
 });
 
+postRouter.delete("/:postId", async (req, res) => {
+  const { postId } = req.params;
+  const post = await db.postDeletePost(postId);
+  console.log("bravo legendo");
+  res.json(post);
+});
+
 // indexRouter.get("/", async (req, res) => {
 //   try {
 //     const { folderId } = req.params;

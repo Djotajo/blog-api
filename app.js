@@ -17,11 +17,16 @@ const LocalStrategy = require("passport-local").Strategy;
 const expressSession = require("express-session");
 // const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("@prisma/client");
+const cors = require("cors");
 
 const indexRouter = require("./routes/indexRouter");
 const postRouter = require("./routes/postRouter");
 
 app.use(express.static(path.join(__dirname, "public")));
+
+// --- Enable CORS for all routes ---
+app.use(cors());
+// ----------------------------------
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");

@@ -104,6 +104,80 @@ async function getPost(postId) {
   }
 }
 
+async function postNewPost(title, text, authorId) {
+  try {
+    const post = await prisma.post.create({
+      data: {
+        title,
+        text,
+        authorId,
+        published: true,
+      },
+    });
+
+    return post;
+  } catch (error) {
+    console.error("Database error creating post:", error);
+    throw new Error("Failed to create post.");
+  }
+}
+
+async function updatePost(postId, title, text, authorId) {
+  try {
+    const post = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        title,
+        text,
+        authorId,
+      },
+    });
+
+    return post;
+  } catch (error) {
+    console.error("Database error updating post:", error);
+    throw new Error("Failed to update post.");
+  }
+}
+
+async function postPostPublish(postId) {
+  try {
+    const updatedPost = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        published: true,
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    return updatedPost;
+  } catch (error) {
+    console.error("Database error:", error);
+    return { error };
+  }
+}
+
+async function postPostUnpublish(postId) {
+  try {
+    const updatedPost = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        published: false,
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    return updatedPost;
+  } catch (error) {
+    console.error("Database error:", error);
+    return { error };
+  }
+}
+
 async function getPostComments(postId) {
   try {
     const comments = await prisma.comment.findMany({
@@ -122,7 +196,7 @@ async function getPostComments(postId) {
   }
 }
 
-async function postDeletePost(postId) {
+async function deletePost(postId) {
   try {
     const existingPost = await prisma.post.findUnique({
       where: { id: postId },
@@ -141,7 +215,7 @@ async function postDeletePost(postId) {
   }
 }
 
-async function postDeleteComment(commentId) {
+async function deleteComment(commentId) {
   try {
     const existingComment = await prisma.comment.findUnique({
       where: { id: Number(commentId) },
@@ -168,8 +242,12 @@ module.exports = {
   getPostsByAuthor,
   getPost,
   getPostComments,
-  postDeletePost,
-  postDeleteComment,
+  postNewPost,
+  updatePost,
+  postPostPublish,
+  postPostUnpublish,
+  deletePost,
+  deleteComment,
 };
 
 // async function postRootFolder(userId) {
