@@ -70,14 +70,23 @@ async function getPostsByAuthor(username) {
   try {
     const author = await prisma.author.findUnique({
       where: { username: username },
-      include: { Post: true },
+      select: {
+        id: true,
+        username: true,
+        createdAt: true,
+        Post: {
+          include: {
+            Comment: true, // This will include all comments associated with each post
+          },
+        },
+      },
     });
 
     if (!author) {
       return null;
     }
 
-    return author.Post;
+    return author;
   } catch (error) {
     console.error("Database error:", error);
     return { error };
