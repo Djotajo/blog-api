@@ -26,7 +26,7 @@ postRouter.get("/:postId/:comments", async (req, res) => {
 postRouter.get("/:postId", async (req, res) => {
   const { postId } = req.params;
   //   const post = await db.getPost(postId);
-  const post = await db.getPost("testpost");
+  const post = await db.getPost(postId);
   console.log("bravo legendo");
   res.json(post);
 });

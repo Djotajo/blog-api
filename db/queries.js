@@ -97,8 +97,13 @@ async function getPost(postId) {
   try {
     const post = await prisma.post.findUnique({
       where: { id: postId },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        text: true,
         author: true,
+        createdAt: true,
+        Comment: true,
       },
     });
 
