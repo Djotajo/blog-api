@@ -103,7 +103,31 @@ async function getPost(postId) {
         text: true,
         author: true,
         createdAt: true,
-        Comment: true,
+        // Comment: true,
+        Comment: {
+          // <--- Make sure this matches the relation name on your Post model
+          include: {
+            // Include the User who made the comment (if any)
+            commentByUser: {
+              select: {
+                id: true,
+                username: true, // Assuming your User model has a 'name' field
+                // Add other user fields you need
+              },
+            },
+            // Include the Author who made the comment (if any)
+            commentByAuthor: {
+              select: {
+                id: true,
+                username: true, // Assuming your Author model has a 'name' field
+                // Add other author fields you need
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "asc", // Order comments by creation date
+          },
+        },
       },
     });
 
