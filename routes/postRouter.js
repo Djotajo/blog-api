@@ -19,7 +19,7 @@ postRouter.get("/", async (req, res) => {
 postRouter.get("/:postId/:comments", async (req, res) => {
   const { postId } = req.params;
   const comments = await db.getPostComments(postId);
-  console.log("bravo legendo");
+  console.log("bravo komentaru");
   res.json(comments);
 });
 
@@ -29,6 +29,19 @@ postRouter.get("/:postId", async (req, res) => {
   const post = await db.getPost(postId);
   console.log("bravo legendo");
   res.json(post);
+});
+
+postRouter.post("/:postId", async (req, res) => {
+  const { postId } = req.params;
+
+  const { text, authorId, userId } = req.body;
+  console.log("post router authorId");
+  console.log(authorId);
+  //   const post = await db.getPost(postId);
+  const parentId = postId;
+  const comment = await db.postNewComment(text, authorId, userId, parentId);
+  console.log("bravo legendo");
+  res.json(comment);
 });
 
 postRouter.delete("/:postId", async (req, res) => {

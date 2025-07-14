@@ -160,6 +160,26 @@ async function postNewPost(title, text, authorId) {
   }
 }
 
+async function postNewComment(text, authorId, userId = null, parentId) {
+  try {
+    console.log("postNewComment authorId");
+    console.log(authorId);
+    const comment = await prisma.comment.create({
+      data: {
+        text,
+        authorId,
+        // userId,
+        parentId,
+      },
+    });
+
+    return comment;
+  } catch (error) {
+    console.error("Database error creating comment:", error);
+    throw new Error("Failed to create comment.");
+  }
+}
+
 async function updatePost(postId, title, text, authorId) {
   try {
     const post = await prisma.post.update({
@@ -281,6 +301,7 @@ module.exports = {
   getPost,
   getPostComments,
   postNewPost,
+  postNewComment,
   updatePost,
   postPostPublish,
   postPostUnpublish,
