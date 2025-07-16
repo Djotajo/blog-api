@@ -32,6 +32,8 @@ app.use(bodyParser.json());
 const indexRouter = require("./routes/indexRouter");
 const postRouter = require("./routes/postRouter");
 
+const newUserController = require("./controllers/newUserController");
+
 app.use(express.static(path.join(__dirname, "public")));
 
 // --- Enable CORS for all routes ---
@@ -66,14 +68,27 @@ app.post("/login", async (req, res) => {
     return res.status(401).json({ message: "Auth failed, wrong password" });
   }
 
-  opts.expiresIn = 120; //token expires in 2min
-  const secret = env("SECRET_KEY"); //normally stored in process.env.secret
-  const token = jwt.sign({ username }, secret, opts);
+  const signOpts = {};
+  signOpts.expiresIn = 120; //token expires in 2min
+  const secret = process.env.SECRET_KEY;
+
+  if (!secret) {
+    console.error("JWT_SECRET environment variable is not set!");
+    return res.status(500).json({ message: "Server configuration error." });
+  }
+
+  const token = jwt.sign(
+    { username: user.username, id: user.id },
+    secret,
+    signOpts
+  );
   return res.status(200).json({
     message: "Auth Passed",
     token,
   });
 });
+
+app.post("/signup", newUserController.newUserCreate);
 
 app.get(
   "/protected",
