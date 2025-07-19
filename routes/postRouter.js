@@ -36,10 +36,10 @@ postRouter.post("/:postId", async (req, res) => {
 
   const { text, authorId, userId } = req.body;
   console.log("post router authorId");
-  console.log(authorId);
+  // console.log(authorId);
   //   const post = await db.getPost(postId);
   const parentId = postId;
-  const comment = await db.postNewComment(text, authorId, userId, parentId);
+  const comment = await db.postNewComment(text, userId, authorId, parentId);
   console.log("bravo legendo");
   res.json(comment);
 });

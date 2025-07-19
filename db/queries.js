@@ -160,15 +160,15 @@ async function postNewPost(title, text, authorId) {
   }
 }
 
-async function postNewComment(text, authorId, userId = null, parentId) {
+async function postNewComment(text, userId = null, authorId = null, parentId) {
   try {
     console.log("postNewComment authorId");
     console.log(authorId);
     const comment = await prisma.comment.create({
       data: {
         text,
-        authorId,
-        // userId,
+        // authorId,
+        userId,
         parentId,
       },
     });
