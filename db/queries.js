@@ -1,11 +1,5 @@
 const prisma = require("./prisma");
 
-// async function getUserByUsername(username) {
-//   return prisma.user.findUnique({
-//     where: { username },
-//   });
-// }
-
 async function postNewAuthor(username, hashedPassword) {
   try {
     const author = await prisma.author.create({
@@ -180,6 +174,22 @@ async function postNewComment(text, userId = null, authorId = null, parentId) {
   }
 }
 
+async function editComment(commentId, text) {
+  try {
+    const comment = await prisma.comment.update({
+      where: { id: commentId },
+      data: {
+        text,
+      },
+    });
+
+    return comment;
+  } catch (error) {
+    console.error("Database error editing comment:", error);
+    throw new Error("Failed to edit comment.");
+  }
+}
+
 async function updatePost(postId, title, text, authorId) {
   try {
     const post = await prisma.post.update({
@@ -302,6 +312,7 @@ module.exports = {
   getPostComments,
   postNewPost,
   postNewComment,
+  editComment,
   updatePost,
   postPostPublish,
   postPostUnpublish,
