@@ -177,7 +177,7 @@ async function postNewComment(text, userId = null, authorId = null, parentId) {
 async function editComment(commentId, text) {
   try {
     const comment = await prisma.comment.update({
-      where: { id: commentId },
+      where: { id: Number(commentId) },
       data: {
         text,
       },
@@ -186,7 +186,7 @@ async function editComment(commentId, text) {
     return comment;
   } catch (error) {
     console.error("Database error editing comment:", error);
-    throw new Error("Failed to edit comment.");
+    throw new Error("Failed to edit comment bro.");
   }
 }
 

@@ -16,11 +16,20 @@ postRouter.get("/", async (req, res) => {
 //   res.json(post);
 // });
 
-postRouter.get("/:postId/:comments", async (req, res) => {
-  const { postId } = req.params;
-  const comments = await db.getPostComments(postId);
+// postRouter.get("/:postId/:comments", async (req, res) => {
+//   const { postId } = req.params;
+//   const comments = await db.getPostComments(postId);
+//   console.log("bravo komentaru");
+//   res.json(comments);
+// });
+
+postRouter.put("/:postId/:commentId", async (req, res) => {
+  console.log("stigao");
+  const { postId, commentId } = req.params;
+  const { text } = req.body;
+  const comment = await db.editComment(commentId, text);
   console.log("bravo komentaru");
-  res.json(comments);
+  res.json(comment);
 });
 
 postRouter.get("/:postId", async (req, res) => {
@@ -35,9 +44,6 @@ postRouter.post("/:postId", async (req, res) => {
   const { postId } = req.params;
 
   const { text, authorId, userId } = req.body;
-  console.log("post router authorId");
-  // console.log(authorId);
-  //   const post = await db.getPost(postId);
   const parentId = postId;
   const comment = await db.postNewComment(text, userId, authorId, parentId);
   console.log("bravo legendo");
