@@ -32,6 +32,14 @@ postRouter.put("/:postId/:commentId", async (req, res) => {
   res.json(comment);
 });
 
+postRouter.delete("/:postId/:commentId", async (req, res) => {
+  console.log("stigao delete");
+  const { commentId } = req.params;
+  const comment = await db.deleteComment(commentId);
+  console.log("bravo obrisani komentaru");
+  res.json(comment);
+});
+
 postRouter.get("/:postId", async (req, res) => {
   const { postId } = req.params;
   //   const post = await db.getPost(postId);
