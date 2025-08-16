@@ -88,6 +88,44 @@ app.post("/login", async (req, res) => {
   });
 });
 
+app.post("/adminlogin", async (req, res) => {
+  let { username, password } = req.body;
+
+  const author = await db.getAuthor(username);
+
+  console.log(author);
+  if (!author) {
+    console.log("no author");
+    return res
+      .status(401)
+      .json({ message: "Auth failed, author does not exist" });
+  }
+  const match = await bcrypt.compare(password, author.passwordHash);
+
+  if (!match) {
+    return res.status(401).json({ message: "Auth failed, wrong password" });
+  }
+
+  const signOpts = {};
+  signOpts.expiresIn = 1200; //token expires in 2min
+  const secret = process.env.SECRET_KEY;
+
+  if (!secret) {
+    console.error("JWT_SECRET environment variable is not set!");
+    return res.status(500).json({ message: "Server configuration error." });
+  }
+
+  const token = jwt.sign(
+    { username: author.username, id: author.id },
+    secret,
+    signOpts
+  );
+  return res.status(200).json({
+    message: "Auth Passed",
+    token,
+  });
+});
+
 app.post("/signup", newUserController.newUserCreate);
 
 app.get(

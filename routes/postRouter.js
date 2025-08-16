@@ -5,7 +5,7 @@ const postRouter = Router();
 const db = require("../db/queries");
 
 postRouter.get("/", async (req, res) => {
-  const posts = await db.getPostsByAuthor("djo");
+  const posts = await db.getPostsByAuthor("djordje");
   console.log("bravo legendo");
   res.json(posts);
 });

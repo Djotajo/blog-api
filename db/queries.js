@@ -62,6 +62,7 @@ async function getUser(username) {
 
 async function getPostsByAuthor(username) {
   try {
+    console.log(username);
     const author = await prisma.author.findUnique({
       where: { username: username },
       select: {
@@ -77,6 +78,7 @@ async function getPostsByAuthor(username) {
     });
 
     if (!author) {
+      console.log("no author");
       return null;
     }
 
