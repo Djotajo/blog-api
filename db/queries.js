@@ -136,10 +136,11 @@ async function getPost(postId) {
   }
 }
 
-async function postNewPost(title, text, authorId) {
+async function postNewPost(id, title, text, authorId) {
   try {
     const post = await prisma.post.create({
       data: {
+        id,
         title,
         text,
         authorId,

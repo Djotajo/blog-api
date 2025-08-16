@@ -10,6 +10,13 @@ postRouter.get("/", async (req, res) => {
   res.json(posts);
 });
 
+postRouter.post("/", async (req, res) => {
+  const { id, title, text, authorId } = req.body;
+  const post = await db.postNewPost(id, title, text, authorId);
+  console.log("Post created");
+  res.json(post);
+});
+
 // postRouter.get("/:postId/:comments/:commentId", async (req, res) => {
 //   const post = await db.getPost("testpost");
 //   console.log("bravo legendo");
