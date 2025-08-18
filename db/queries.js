@@ -92,6 +92,8 @@ async function getPostsByAuthor(username) {
 async function getAllPosts() {
   try {
     const posts = await prisma.post.findMany({
+      where: { published: true },
+
       include: {
         Comment: true, // This will include all comments associated with each post
       },
@@ -103,6 +105,27 @@ async function getAllPosts() {
     }
 
     return posts;
+  } catch (error) {
+    console.error("Database error:", error);
+    return { error };
+  }
+}
+
+async function getAllDrafts() {
+  try {
+    const drafts = await prisma.post.findMany({
+      where: { published: false },
+      include: {
+        author: true,
+      },
+    });
+
+    if (!drafts) {
+      console.log("no posts");
+      return null;
+    }
+    console.log(drafts);
+    return drafts;
   } catch (error) {
     console.error("Database error:", error);
     return { error };
@@ -158,7 +181,7 @@ async function getPost(postId) {
   }
 }
 
-async function postNewPost(id, title, text, authorId) {
+async function postNewPost(id, title, text, authorId, published) {
   try {
     const post = await prisma.post.create({
       data: {
@@ -166,7 +189,7 @@ async function postNewPost(id, title, text, authorId) {
         title,
         text,
         authorId,
-        published: true,
+        published,
       },
     });
 
@@ -332,6 +355,7 @@ module.exports = {
   getUser,
   getPostsByAuthor,
   getAllPosts,
+  getAllDrafts,
   getPost,
   getPostComments,
   postNewPost,
