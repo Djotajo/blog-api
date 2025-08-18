@@ -89,6 +89,26 @@ async function getPostsByAuthor(username) {
   }
 }
 
+async function getAllPosts() {
+  try {
+    const posts = await prisma.post.findMany({
+      include: {
+        Comment: true, // This will include all comments associated with each post
+      },
+    });
+
+    if (!posts) {
+      console.log("no posts");
+      return null;
+    }
+
+    return posts;
+  } catch (error) {
+    console.error("Database error:", error);
+    return { error };
+  }
+}
+
 async function getPost(postId) {
   try {
     const post = await prisma.post.findUnique({
@@ -311,6 +331,7 @@ module.exports = {
   getAuthor,
   getUser,
   getPostsByAuthor,
+  getAllPosts,
   getPost,
   getPostComments,
   postNewPost,

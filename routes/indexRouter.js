@@ -21,6 +21,7 @@ const db = require("../db/queries");
 // });
 
 indexRouter.get("/", async (req, res) => {
+  console.log("index router");
   //   if (req.user) {
   //     const root = await db.getRootFolder(req.user.id);
   //     res.render("index", {

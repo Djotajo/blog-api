@@ -5,8 +5,10 @@ const postRouter = Router();
 const db = require("../db/queries");
 
 postRouter.get("/", async (req, res) => {
-  const posts = await db.getPostsByAuthor("djordje");
-  console.log("bravo legendo");
+  // const posts = await db.getPostsByAuthor("djordje");
+  const posts = await db.getAllPosts();
+
+  console.log("All posts log");
   res.json(posts);
 });
 
@@ -67,7 +69,7 @@ postRouter.post("/:postId", async (req, res) => {
 
 postRouter.delete("/:postId", async (req, res) => {
   const { postId } = req.params;
-  const post = await db.postDeletePost(postId);
+  const post = await db.deletePost(postId);
   console.log("bravo legendo");
   res.json(post);
 });
