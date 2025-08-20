@@ -95,6 +95,7 @@ async function getAllPosts() {
       where: { published: true },
 
       include: {
+        author: true,
         Comment: true, // This will include all comments associated with each post
       },
     });
@@ -236,14 +237,13 @@ async function editComment(commentId, text) {
   }
 }
 
-async function updatePost(postId, title, text, authorId) {
+async function updatePost(postId, title, text) {
   try {
     const post = await prisma.post.update({
       where: { id: postId },
       data: {
         title,
         text,
-        authorId,
       },
     });
 

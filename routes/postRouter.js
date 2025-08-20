@@ -20,6 +20,15 @@ postRouter.get("/drafts", async (req, res) => {
   res.json(drafts);
 });
 
+postRouter.put("/drafts/:postId", async (req, res) => {
+  console.log("stigao draft");
+  const { postId } = req.params;
+  const { title, text } = req.body;
+  const draft = await db.updatePost(postId, title, text);
+
+  res.json(draft);
+});
+
 postRouter.post("/", async (req, res) => {
   const { id, title, text, authorId, published } = req.body;
   const post = await db.postNewPost(id, title, text, authorId, published);
