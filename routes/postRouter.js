@@ -12,11 +12,30 @@ postRouter.get("/", async (req, res) => {
   res.json(posts);
 });
 
+// postRouter.get("/:authorId", async (req, res) => {
+//   const { authorId } = req.params;
+//   const posts = await db.getAllPostsByAuthor(authorId);
+
+//   console.log("All posts by author log");
+//   console.log("je l se ovo aktivira");
+//   res.json(posts);
+// });
+
 postRouter.get("/drafts", async (req, res) => {
   // const posts = await db.getPostsByAuthor("djordje");
   const drafts = await db.getAllDrafts();
 
   console.log("All drafts log");
+  res.json(drafts);
+});
+
+postRouter.get("/drafts/:authorId", async (req, res) => {
+  // const posts = await db.getPostsByAuthor("djordje");
+  const { authorId } = req.params;
+
+  const drafts = await db.getAllDraftsByAuthor(authorId);
+
+  console.log("All drafts by author log");
   res.json(drafts);
 });
 

@@ -60,11 +60,11 @@ async function getUser(username) {
 //   }
 // }
 
-async function getPostsByAuthor(username) {
+async function getPostsByAuthor(authorId) {
   try {
-    console.log(username);
+    console.log("ovo radi");
     const author = await prisma.author.findUnique({
-      where: { username: username },
+      where: { id: authorId },
       select: {
         id: true,
         username: true,
@@ -81,7 +81,7 @@ async function getPostsByAuthor(username) {
       console.log("no author");
       return null;
     }
-
+    console.log(author);
     return author;
   } catch (error) {
     console.error("Database error:", error);
@@ -127,6 +127,55 @@ async function getAllDrafts() {
     }
     console.log(drafts);
     return drafts;
+  } catch (error) {
+    console.error("Database error:", error);
+    return { error };
+  }
+}
+
+async function getAllDraftsByAuthor(authorId) {
+  try {
+    const drafts = await prisma.post.findMany({
+      where: { published: false, authorId: authorId },
+      include: {
+        author: true,
+      },
+    });
+
+    if (!drafts) {
+      console.log("no posts");
+      return null;
+    }
+    console.log(authorId);
+
+    console.log(drafts);
+    return drafts;
+  } catch (error) {
+    console.error("Database error:", error);
+    return { error };
+  }
+}
+
+async function getAllPostsByAuthor(authorId) {
+  try {
+    const posts = await prisma.post.findMany({
+      where: { authorId: authorId },
+      include: {
+        author: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    if (!posts) {
+      console.log("no posts");
+      return null;
+    }
+    console.log(authorId);
+
+    console.log(posts);
+    return posts;
   } catch (error) {
     console.error("Database error:", error);
     return { error };
@@ -356,6 +405,8 @@ module.exports = {
   getPostsByAuthor,
   getAllPosts,
   getAllDrafts,
+  getAllDraftsByAuthor,
+  getAllPostsByAuthor,
   getPost,
   getPostComments,
   postNewPost,

@@ -4,21 +4,14 @@ const indexRouter = Router();
 
 const db = require("../db/queries");
 
-// indexRouter.get("/logout", (req, res, next) => {
-//   req.logout((err) => {
-//     if (err) return next(err);
+indexRouter.get("/:authorId", async (req, res) => {
+  const { authorId } = req.params;
+  const posts = await db.getAllPostsByAuthor(authorId);
 
-//     req.session.destroy((err) => {
-//       if (err) {
-//         console.error("Session destruction failed:", err);
-//         return res.status(500).send("Could not log out.");
-//       }
-
-//       res.clearCookie("my-session");
-//       res.redirect("/");
-//     });
-//   });
-// });
+  console.log("All posts by author log");
+  console.log("je l se ovo aktivira");
+  res.json(posts);
+});
 
 indexRouter.get("/", async (req, res) => {
   console.log("index router");
