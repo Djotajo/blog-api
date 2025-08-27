@@ -81,7 +81,6 @@ async function getPostsByAuthor(authorId) {
       console.log("no author");
       return null;
     }
-    console.log(author);
     return author;
   } catch (error) {
     console.error("Database error:", error);
@@ -125,7 +124,6 @@ async function getAllDrafts() {
       console.log("no posts");
       return null;
     }
-    console.log(drafts);
     return drafts;
   } catch (error) {
     console.error("Database error:", error);
@@ -146,9 +144,7 @@ async function getAllDraftsByAuthor(authorId) {
       console.log("no posts");
       return null;
     }
-    console.log(authorId);
 
-    console.log(drafts);
     return drafts;
   } catch (error) {
     console.error("Database error:", error);
@@ -172,9 +168,7 @@ async function getAllPostsByAuthor(authorId) {
       console.log("no posts");
       return null;
     }
-    console.log(authorId);
 
-    console.log(posts);
     return posts;
   } catch (error) {
     console.error("Database error:", error);
@@ -252,8 +246,6 @@ async function postNewPost(id, title, text, authorId, published) {
 
 async function postNewComment(text, userId = null, authorId = null, parentId) {
   try {
-    console.log("postNewComment authorId");
-    console.log(authorId);
     const comment = await prisma.comment.create({
       data: {
         text,
@@ -287,6 +279,23 @@ async function editComment(commentId, text) {
 }
 
 async function updatePost(postId, title, text) {
+  try {
+    const post = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        title,
+        text,
+      },
+    });
+
+    return post;
+  } catch (error) {
+    console.error("Database error updating post:", error);
+    throw new Error("Failed to update post.");
+  }
+}
+
+async function updateDraft(postId, title, text) {
   try {
     const post = await prisma.post.update({
       where: { id: postId },
@@ -413,6 +422,7 @@ module.exports = {
   postNewComment,
   editComment,
   updatePost,
+  updateDraft,
   postPostPublish,
   postPostUnpublish,
   deletePost,

@@ -55,7 +55,6 @@ app.post("/login", async (req, res) => {
 
   const user = await db.getUser(username);
 
-  console.log(user);
   if (!user) {
     console.log("no user");
     return res
@@ -93,7 +92,6 @@ app.post("/adminlogin", async (req, res) => {
 
   const author = await db.getAuthor(username);
 
-  console.log(author);
   if (!author) {
     console.log("no author");
     return res

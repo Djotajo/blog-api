@@ -48,6 +48,15 @@ postRouter.put("/drafts/:postId", async (req, res) => {
   res.json(draft);
 });
 
+postRouter.put("/:postId/edit", async (req, res) => {
+  console.log("stigao edit post");
+  const { postId } = req.params;
+  const { title, text } = req.body;
+  const draft = await db.updatePost(postId, title, text);
+
+  res.json(draft);
+});
+
 postRouter.post("/", async (req, res) => {
   const { id, title, text, authorId, published } = req.body;
   const post = await db.postNewPost(id, title, text, authorId, published);
@@ -69,7 +78,6 @@ postRouter.post("/", async (req, res) => {
 // });
 
 postRouter.put("/:postId/:commentId", async (req, res) => {
-  console.log("stigao");
   const { postId, commentId } = req.params;
   const { text } = req.body;
   const comment = await db.editComment(commentId, text);
