@@ -9,7 +9,7 @@ indexRouter.get("/:authorId", async (req, res) => {
   const posts = await db.getAllPostsByAuthor(authorId);
 
   console.log("All posts by author log");
-  console.log("je l se ovo aktivira");
+  console.log("je l se ovo aktivira braco");
   res.json(posts);
 });
 

@@ -245,15 +245,28 @@ async function postNewPost(id, title, text, authorId, published) {
 }
 
 async function postNewComment(text, userId = null, authorId = null, parentId) {
+  if (!userId && !authorId) {
+    throw new Error(
+      "A comment must be associated with either a user or an author."
+    );
+  }
+
+  if (userId && authorId) {
+    throw new Error(
+      "A comment cannot be associated with both a user and an author."
+    );
+  }
+
+  console.log(userId);
+  console.log(authorId);
   try {
-    const comment = await prisma.comment.create({
-      data: {
-        text,
-        // authorId,
-        userId,
-        parentId,
-      },
-    });
+    const data = {
+      text,
+      ...(userId && { userId }),
+      ...(authorId && { authorId }),
+      parentId,
+    };
+    const comment = await prisma.comment.create({ data });
 
     return comment;
   } catch (error) {

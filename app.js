@@ -46,9 +46,9 @@ app.use(express.json()); // Parses JSON bodies
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(assetsPath));
 
-app.use("/", indexRouter);
-
 app.use("/posts", postRouter);
+
+app.use("/", indexRouter);
 
 app.post("/login", async (req, res) => {
   let { username, password } = req.body;
