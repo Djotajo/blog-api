@@ -50,18 +50,55 @@ app.use("/posts", postRouter);
 
 app.use("/", indexRouter);
 
+// app.post("/login", async (req, res) => {
+//   let { username, password } = req.body;
+
+//   const user = await db.getUser(username);
+
+//   if (!user) {
+//     console.log("no user");
+//     return res
+//       .status(401)
+//       .json({ message: "Auth failed, username does not exist" });
+//   }
+//   const match = await bcrypt.compare(password, user.passwordHash);
+
+//   if (!match) {
+//     return res.status(401).json({ message: "Auth failed, wrong password" });
+//   }
+
+//   const signOpts = {};
+//   signOpts.expiresIn = 1200; //token expires in 2min
+//   const secret = process.env.SECRET_KEY;
+
+//   if (!secret) {
+//     console.error("JWT_SECRET environment variable is not set!");
+//     return res.status(500).json({ message: "Server configuration error." });
+//   }
+
+//   const token = jwt.sign(
+//     { username: user.username, id: user.id },
+//     secret,
+//     signOpts
+//   );
+//   return res.status(200).json({
+//     message: "Auth Passed",
+//     token,
+//   });
+// });
+
 app.post("/login", async (req, res) => {
   let { username, password } = req.body;
 
-  const user = await db.getUser(username);
-
+  const user = await db.getUserByUsername(username);
+  console.log(user);
   if (!user) {
     console.log("no user");
     return res
       .status(401)
       .json({ message: "Auth failed, username does not exist" });
   }
-  const match = await bcrypt.compare(password, user.passwordHash);
+  const match = await bcrypt.compare(password, user.user.passwordHash);
 
   if (!match) {
     return res.status(401).json({ message: "Auth failed, wrong password" });
@@ -77,7 +114,7 @@ app.post("/login", async (req, res) => {
   }
 
   const token = jwt.sign(
-    { username: user.username, id: user.id },
+    { username: user.user.username, id: user.user.id, role: user.role },
     secret,
     signOpts
   );
@@ -87,42 +124,46 @@ app.post("/login", async (req, res) => {
   });
 });
 
-app.post("/adminlogin", async (req, res) => {
-  let { username, password } = req.body;
+// app.post("/adminlogin", async (req, res) => {
+//   let { username, password } = req.body;
 
-  const author = await db.getAuthor(username);
+//   const author = await db.getAuthor(username);
 
-  if (!author) {
-    console.log("no author");
-    return res
-      .status(401)
-      .json({ message: "Auth failed, author does not exist" });
-  }
-  const match = await bcrypt.compare(password, author.passwordHash);
+//   if (!author) {
+//     console.log("no author");
+//     return res
+//       .status(401)
+//       .json({ message: "Auth failed, author does not exist" });
+//   }
+//   const match = await bcrypt.compare(password, author.passwordHash);
 
-  if (!match) {
-    return res.status(401).json({ message: "Auth failed, wrong password" });
-  }
+//   if (!match) {
+//     return res.status(401).json({ message: "Auth failed, wrong password" });
+//   }
 
-  const signOpts = {};
-  signOpts.expiresIn = 1200; //token expires in 2min
-  const secret = process.env.SECRET_KEY;
+//   const signOpts = {};
+//   signOpts.expiresIn = 1200; //token expires in 2min
+//   const secret = process.env.SECRET_KEY;
 
-  if (!secret) {
-    console.error("JWT_SECRET environment variable is not set!");
-    return res.status(500).json({ message: "Server configuration error." });
-  }
+//   if (!secret) {
+//     console.error("JWT_SECRET environment variable is not set!");
+//     return res.status(500).json({ message: "Server configuration error." });
+//   }
 
-  const token = jwt.sign(
-    { username: author.username, id: author.id },
-    secret,
-    signOpts
-  );
-  return res.status(200).json({
-    message: "Auth Passed",
-    token,
-  });
-});
+//   const token = jwt.sign(
+//     {
+//       username: author.username,
+//       id: author.id,
+//       // dodati role
+//     },
+//     secret,
+//     signOpts
+//   );
+//   return res.status(200).json({
+//     message: "Auth Passed",
+//     token,
+//   });
+// });
 
 app.post("/signup", newUserController.newUserCreate);
 

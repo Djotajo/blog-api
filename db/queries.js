@@ -24,6 +24,26 @@ async function postNewUser(username, hashedPassword) {
   }
 }
 
+async function getUserByUsername(username) {
+  try {
+    const [author, user] = await Promise.all([
+      prisma.author.findUnique({ where: { username } }),
+      prisma.user.findUnique({ where: { username } }),
+    ]);
+    if (author) {
+      return { role: "author", user: author };
+    }
+    if (user) {
+      return { role: "user", user };
+    }
+
+    return { success: false, error: "User not found" };
+  } catch (error) {
+    console.error("Database error:", error);
+    return { success: false, error };
+  }
+}
+
 async function getAuthor(username) {
   try {
     const author = await prisma.author.findUnique({
@@ -91,7 +111,7 @@ async function getPostsByAuthor(authorId) {
 async function getAllPosts() {
   try {
     const posts = await prisma.post.findMany({
-      where: { published: true },
+      // where: { published: true },
 
       include: {
         author: true,
@@ -422,6 +442,7 @@ async function deleteComment(commentId) {
 module.exports = {
   postNewAuthor,
   postNewUser,
+  getUserByUsername,
   getAuthor,
   getUser,
   getPostsByAuthor,
