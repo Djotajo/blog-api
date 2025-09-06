@@ -4,33 +4,30 @@ const postRouter = Router();
 
 const db = require("../db/queries");
 
-postRouter.get("/drafts/:authorId", async (req, res) => {
-  // const posts = await db.getPostsByAuthor("djordje");
-  const { authorId } = req.params;
+// postRouter.get("/drafts/:authorId", async (req, res) => {
+//   const { authorId } = req.params;
 
-  const drafts = await db.getAllPostsByAuthor(authorId);
+//   const drafts = await db.getAllPostsByAuthor(authorId);
 
-  console.log("All drafts by author log");
-  res.json(drafts);
-});
+//   console.log("All drafts by author log");
+//   res.json(drafts);
+// });
 
-postRouter.get("/:authorId", async (req, res) => {
-  // const posts = await db.getPostsByAuthor("djordje");
-  const { authorId } = req.params;
+// postRouter.get("/:authorId", async (req, res) => {
+//   const { authorId } = req.params;
 
-  const posts = await db.getAllPostsByAuthor(authorId);
+//   const posts = await db.getAllPostsByAuthor(authorId);
 
-  console.log("All posts by author log");
-  res.json(posts);
-});
+//   console.log("All posts by author log");
+//   res.json(posts);
+// });
 
-postRouter.get("/drafts", async (req, res) => {
-  // const posts = await db.getPostsByAuthor("djordje");
-  const posts = await db.getAllPosts();
+// postRouter.get("/drafts", async (req, res) => {
+//   const posts = await db.getAllPosts();
 
-  console.log("All drafts log");
-  res.json(posts);
-});
+//   console.log("All drafts log");
+//   res.json(posts);
+// });
 
 postRouter.get("/", async (req, res) => {
   // const posts = await db.getPostsByAuthor("djordje");

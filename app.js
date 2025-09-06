@@ -31,6 +31,7 @@ app.use(bodyParser.json());
 
 const indexRouter = require("./routes/indexRouter");
 const postRouter = require("./routes/postRouter");
+const dashboardRouter = require("./routes/dashboardRouter");
 
 const newUserController = require("./controllers/newUserController");
 
@@ -45,6 +46,8 @@ app.set("view engine", "ejs");
 app.use(express.json()); // Parses JSON bodies
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(assetsPath));
+
+app.use("/dashboard", dashboardRouter);
 
 app.use("/posts", postRouter);
 
