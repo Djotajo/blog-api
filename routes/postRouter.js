@@ -14,6 +14,16 @@ postRouter.get("/drafts/:authorId", async (req, res) => {
   res.json(drafts);
 });
 
+postRouter.get("/:authorId", async (req, res) => {
+  // const posts = await db.getPostsByAuthor("djordje");
+  const { authorId } = req.params;
+
+  const posts = await db.getAllPostsByAuthor(authorId);
+
+  console.log("All posts by author log");
+  res.json(posts);
+});
+
 postRouter.get("/drafts", async (req, res) => {
   // const posts = await db.getPostsByAuthor("djordje");
   const posts = await db.getAllPosts();
@@ -33,8 +43,8 @@ postRouter.get("/", async (req, res) => {
 postRouter.put("/drafts/:postId", async (req, res) => {
   console.log("stigao draft");
   const { postId } = req.params;
-  const { title, text } = req.body;
-  const draft = await db.updatePost(postId, title, text);
+  const { title, text, published } = req.body;
+  const draft = await db.updatePost(postId, title, text, published);
 
   res.json(draft);
 });
