@@ -30,7 +30,6 @@ const db = require("../db/queries");
 // });
 
 postRouter.get("/", async (req, res) => {
-  // const posts = await db.getPostsByAuthor("djordje");
   const posts = await db.getAllPosts();
 
   console.log("All posts log");

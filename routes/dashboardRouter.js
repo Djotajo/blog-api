@@ -1,6 +1,7 @@
 const { Router } = require("express");
 
-const express = require("express");
+const { Prisma } = require("@prisma/client");
+
 const jwt = require("jsonwebtoken");
 
 const dashboardRouter = Router();
@@ -33,25 +34,84 @@ function authenticateAuthor(req, res, next) {
 dashboardRouter.get("/posts", authenticateAuthor, async (req, res) => {
   const authorId = req.user.id;
   const posts = await db.getAllPostsByAuthor(authorId);
-
-  console.log("Dashboard all posts by author log");
   res.json(posts);
 });
 
-dashboardRouter.post("/posts", async (req, res) => {
-  const { id, title, text, authorId, published } = req.body;
-  const post = await db.postNewPost(id, title, text, authorId, published);
-  console.log("Post created");
+dashboardRouter.post("/posts", authenticateAuthor, async (req, res) => {
+  const { id, title, text, published } = req.body;
+  const authorId = req.user.id;
+
+  try {
+    const post = await db.postNewPost(id, title, text, authorId, published);
+    console.log("Post created");
+    res.status(201).json(post);
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002" &&
+      error.meta?.target?.includes("title")
+    ) {
+      return res
+        .status(409)
+        .json({ message: "A post with this title already exists." });
+    }
+    console.error("Error creating post:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+dashboardRouter.get("/posts/:postId", async (req, res) => {
+  const { postId } = req.params;
+  //   const post = await db.getPost(postId);
+  const post = await db.getPost(postId);
+  console.log("bravo legendo");
   res.json(post);
 });
 
-dashboardRouter.put("/drafts/:postId", async (req, res) => {
-  console.log("stigao draft");
+dashboardRouter.put("/posts/:postId", authenticateAuthor, async (req, res) => {
   const { postId } = req.params;
   const { title, text, published } = req.body;
-  const draft = await db.updatePost(postId, title, text, published);
 
-  res.json(draft);
+  try {
+    const post = await db.updatePost(postId, title, text, published);
+    console.log("Post updated");
+    res.status(200).json(post);
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002" &&
+      error.meta?.target?.includes("title")
+    ) {
+      return res
+        .status(409)
+        .json({ message: "A post with this title already exists." });
+    }
+    console.error("Error updating post:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+dashboardRouter.put("/drafts/:postId", authenticateAuthor, async (req, res) => {
+  const { postId } = req.params;
+  const { title, text, published } = req.body;
+
+  try {
+    const draft = await db.updatePost(postId, title, text, published);
+    console.log("Draft updated");
+    res.status(200).json(draft);
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002" &&
+      error.meta?.target?.includes("title")
+    ) {
+      return res
+        .status(409)
+        .json({ message: "A post with this title already exists." });
+    }
+    console.error("Error creating post:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 dashboardRouter.put("/:postId/edit", async (req, res) => {

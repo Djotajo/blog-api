@@ -260,7 +260,7 @@ async function postNewPost(id, title, text, authorId, published) {
     return post;
   } catch (error) {
     console.error("Database error creating post:", error);
-    throw new Error("Failed to create post.");
+    throw error;
   }
 }
 
@@ -325,7 +325,7 @@ async function updatePost(postId, title, text, published) {
     return post;
   } catch (error) {
     console.error("Database error updating post:", error);
-    throw new Error("Failed to update post.");
+    throw error;
   }
 }
 
