@@ -108,7 +108,7 @@ app.post("/login", async (req, res) => {
   }
 
   const signOpts = {};
-  signOpts.expiresIn = 1200; //token expires in 2min
+  signOpts.expiresIn = "8h"; //token expires in 2min
   const secret = process.env.SECRET_KEY;
 
   if (!secret) {
