@@ -36,30 +36,30 @@ postRouter.get("/", async (req, res) => {
   res.json(posts);
 });
 
-postRouter.put("/drafts/:postId", async (req, res) => {
-  console.log("stigao draft");
-  const { postId } = req.params;
-  const { title, text, published } = req.body;
-  const draft = await db.updatePost(postId, title, text, published);
+// postRouter.put("/drafts/:postId", async (req, res) => {
+//   console.log("stigao draft");
+//   const { postId } = req.params;
+//   const { title, text, published } = req.body;
+//   const draft = await db.updatePost(postId, title, text, published);
 
-  res.json(draft);
-});
+//   res.json(draft);
+// });
 
-postRouter.put("/:postId/edit", async (req, res) => {
-  console.log("stigao edit post");
-  const { postId } = req.params;
-  const { title, text } = req.body;
-  const draft = await db.updatePost(postId, title, text);
+// postRouter.put("/:postId/edit", async (req, res) => {
+//   console.log("stigao edit post");
+//   const { postId } = req.params;
+//   const { title, text } = req.body;
+//   const draft = await db.updatePost(postId, title, text);
 
-  res.json(draft);
-});
+//   res.json(draft);
+// });
 
-postRouter.post("/", async (req, res) => {
-  const { id, title, text, authorId, published } = req.body;
-  const post = await db.postNewPost(id, title, text, authorId, published);
-  console.log("Post created");
-  res.json(post);
-});
+// postRouter.post("/", async (req, res) => {
+//   const { id, title, text, authorId, published } = req.body;
+//   const post = await db.postNewPost(id, title, text, authorId, published);
+//   console.log("Post created");
+//   res.json(post);
+// });
 
 // postRouter.get("/:postId/:comments/:commentId", async (req, res) => {
 //   const post = await db.getPost("testpost");
@@ -90,13 +90,13 @@ postRouter.delete("/:postId/:commentId", async (req, res) => {
   res.json(comment);
 });
 
-postRouter.get("/:postId", async (req, res) => {
-  const { postId } = req.params;
-  //   const post = await db.getPost(postId);
-  const post = await db.getPost(postId);
-  console.log("bravo legendo");
-  res.json(post);
-});
+// postRouter.get("/:postId", async (req, res) => {
+//   const { postId } = req.params;
+//   //   const post = await db.getPost(postId);
+//   const post = await db.getPost(postId);
+//   console.log("bravo legendo");
+//   res.json(post);
+// });
 
 postRouter.post("/:postId", async (req, res) => {
   const { postId } = req.params;
@@ -108,12 +108,12 @@ postRouter.post("/:postId", async (req, res) => {
   res.json(comment);
 });
 
-postRouter.delete("/:postId", async (req, res) => {
-  const { postId } = req.params;
-  const post = await db.deletePost(postId);
-  console.log("bravo legendo");
-  res.json(post);
-});
+// postRouter.delete("/:postId", async (req, res) => {
+//   const { postId } = req.params;
+//   const post = await db.deletePost(postId);
+//   console.log("bravo legendo");
+//   res.json(post);
+// });
 
 // indexRouter.get("/", async (req, res) => {
 //   try {

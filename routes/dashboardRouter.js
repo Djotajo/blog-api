@@ -31,12 +31,14 @@ function authenticateAuthor(req, res, next) {
   }
 }
 
+// GET POSTS BY AUTHOR
 dashboardRouter.get("/posts", authenticateAuthor, async (req, res) => {
   const authorId = req.user.id;
   const posts = await db.getAllPostsByAuthor(authorId);
   res.json(posts);
 });
 
+// CREATE A NEW POST
 dashboardRouter.post("/posts", authenticateAuthor, async (req, res) => {
   const { id, title, text, published } = req.body;
   const authorId = req.user.id;
@@ -60,14 +62,14 @@ dashboardRouter.post("/posts", authenticateAuthor, async (req, res) => {
   }
 });
 
-dashboardRouter.get("/posts/:postId", async (req, res) => {
+// GET SPECIFIC POST BY ID
+dashboardRouter.get("/posts/:postId", authenticateAuthor, async (req, res) => {
   const { postId } = req.params;
-  //   const post = await db.getPost(postId);
   const post = await db.getPost(postId);
-  console.log("bravo legendo");
   res.json(post);
 });
 
+// EDIT POST
 dashboardRouter.put("/posts/:postId", authenticateAuthor, async (req, res) => {
   const { postId } = req.params;
   const { title, text, published } = req.body;
@@ -91,13 +93,31 @@ dashboardRouter.put("/posts/:postId", authenticateAuthor, async (req, res) => {
   }
 });
 
+// DELETE POST
+dashboardRouter.delete(
+  "/posts/:postId",
+  authenticateAuthor,
+  async (req, res) => {
+    const { postId } = req.params;
+    const post = await db.deletePost(postId);
+    res.json(post);
+  }
+);
+
+// GET SPECIFIC DRAFT BY ID
+dashboardRouter.get("/drafts/:postId", authenticateAuthor, async (req, res) => {
+  const { postId } = req.params;
+  const draft = await db.getPost(postId);
+  res.json(draft);
+});
+
+// UPDATE DRAFT
 dashboardRouter.put("/drafts/:postId", authenticateAuthor, async (req, res) => {
   const { postId } = req.params;
   const { title, text, published } = req.body;
 
   try {
     const draft = await db.updatePost(postId, title, text, published);
-    console.log("Draft updated");
     res.status(200).json(draft);
   } catch (error) {
     if (
@@ -114,13 +134,16 @@ dashboardRouter.put("/drafts/:postId", authenticateAuthor, async (req, res) => {
   }
 });
 
-dashboardRouter.put("/:postId/edit", async (req, res) => {
-  console.log("stigao edit post");
-  const { postId } = req.params;
-  const { title, text } = req.body;
-  const draft = await db.updatePost(postId, title, text);
-
-  res.json(draft);
-});
+// DELETE COMMENT
+dashboardRouter.delete(
+  "/posts/:postId/comments/:commentId",
+  authenticateAuthor,
+  async (req, res) => {
+    const { commentId } = req.params;
+    const comment = await db.deleteComment(commentId);
+    console.log("bravo obrisani komentaru");
+    res.json(comment);
+  }
+);
 
 module.exports = dashboardRouter;
