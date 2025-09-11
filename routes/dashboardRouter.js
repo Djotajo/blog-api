@@ -72,10 +72,10 @@ dashboardRouter.get("/posts/:postId", authenticateAuthor, async (req, res) => {
 // EDIT POST
 dashboardRouter.put("/posts/:postId", authenticateAuthor, async (req, res) => {
   const { postId } = req.params;
-  const { title, text, published } = req.body;
+  const { title, text, published, createdAt } = req.body;
 
   try {
-    const post = await db.updatePost(postId, title, text, published);
+    const post = await db.updatePost(postId, title, text, published, createdAt);
     console.log("Post updated");
     res.status(200).json(post);
   } catch (error) {
@@ -114,10 +114,16 @@ dashboardRouter.get("/drafts/:postId", authenticateAuthor, async (req, res) => {
 // UPDATE DRAFT
 dashboardRouter.put("/drafts/:postId", authenticateAuthor, async (req, res) => {
   const { postId } = req.params;
-  const { title, text, published } = req.body;
+  const { title, text, published, createdAt } = req.body;
 
   try {
-    const draft = await db.updatePost(postId, title, text, published);
+    const draft = await db.updatePost(
+      postId,
+      title,
+      text,
+      published,
+      createdAt
+    );
     res.status(200).json(draft);
   } catch (error) {
     if (
@@ -134,6 +140,19 @@ dashboardRouter.put("/drafts/:postId", authenticateAuthor, async (req, res) => {
   }
 });
 
+// POST COMMENT
+dashboardRouter.post(
+  "/posts/:postId/comments",
+  authenticateAuthor,
+  async (req, res) => {
+    const { postId } = req.params;
+    const { text, authorId, userId } = req.body;
+    const parentId = postId;
+    const comment = await db.postNewComment(text, userId, authorId, parentId);
+    res.json(comment);
+  }
+);
+
 // DELETE COMMENT
 dashboardRouter.delete(
   "/posts/:postId/comments/:commentId",
@@ -141,7 +160,6 @@ dashboardRouter.delete(
   async (req, res) => {
     const { commentId } = req.params;
     const comment = await db.deleteComment(commentId);
-    console.log("bravo obrisani komentaru");
     res.json(comment);
   }
 );

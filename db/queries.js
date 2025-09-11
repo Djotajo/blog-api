@@ -311,7 +311,7 @@ async function editComment(commentId, text) {
   }
 }
 
-async function updatePost(postId, title, text, published) {
+async function updatePost(postId, title, text, published, createdAt) {
   try {
     const post = await prisma.post.update({
       where: { id: postId },
@@ -319,6 +319,7 @@ async function updatePost(postId, title, text, published) {
         title,
         text,
         published,
+        createdAt,
       },
     });
 

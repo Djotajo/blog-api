@@ -98,15 +98,15 @@ postRouter.delete("/:postId/:commentId", async (req, res) => {
 //   res.json(post);
 // });
 
-postRouter.post("/:postId", async (req, res) => {
-  const { postId } = req.params;
+// postRouter.post("/:postId", async (req, res) => {
+//   const { postId } = req.params;
 
-  const { text, authorId, userId } = req.body;
-  const parentId = postId;
-  const comment = await db.postNewComment(text, userId, authorId, parentId);
-  console.log("bravo legendo");
-  res.json(comment);
-});
+//   const { text, authorId, userId } = req.body;
+//   const parentId = postId;
+//   const comment = await db.postNewComment(text, userId, authorId, parentId);
+//   console.log("bravo legendo");
+//   res.json(comment);
+// });
 
 // postRouter.delete("/:postId", async (req, res) => {
 //   const { postId } = req.params;
