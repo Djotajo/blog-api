@@ -44,6 +44,7 @@ model Post {
   createdAt DateTime  @default(now())
   author    Author    @relation(fields: [authorId], references: [id])
   authorId  String
+  sticky    Boolean  @default(false)
   published Boolean
   Comment   Comment[]
 }

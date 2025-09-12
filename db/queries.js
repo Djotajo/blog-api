@@ -265,6 +265,8 @@ async function postNewPost(id, title, text, authorId, published) {
 }
 
 async function postNewComment(text, userId = null, authorId = null, parentId) {
+  console.log(userId);
+  console.log(authorId);
   if (!userId && !authorId) {
     throw new Error(
       "A comment must be associated with either a user or an author."
@@ -277,8 +279,6 @@ async function postNewComment(text, userId = null, authorId = null, parentId) {
     );
   }
 
-  console.log(userId);
-  console.log(authorId);
   try {
     const data = {
       text,
