@@ -37,7 +37,7 @@ async function getUserByUsername(username) {
       return { role: "user", user };
     }
 
-    return { success: false, error: "User not found" };
+    return null;
   } catch (error) {
     console.error("Database error:", error);
     return { success: false, error };

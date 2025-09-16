@@ -97,14 +97,12 @@ app.post("/login", async (req, res) => {
   console.log(user);
   if (!user) {
     console.log("no user");
-    return res
-      .status(401)
-      .json({ message: "Auth failed, username does not exist" });
+    return res.status(401).json({ message: "Username does not exist" });
   }
   const match = await bcrypt.compare(password, user.user.passwordHash);
 
   if (!match) {
-    return res.status(401).json({ message: "Auth failed, wrong password" });
+    return res.status(401).json({ message: "Wrong password" });
   }
 
   const signOpts = {};
