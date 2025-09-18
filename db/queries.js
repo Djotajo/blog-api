@@ -68,21 +68,8 @@ async function getUser(username) {
   }
 }
 
-// async function getUserById(id) {
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { id: id },
-//     });
-//     return user;
-//   } catch (error) {
-//     console.error("Database error:", error);
-//     return { success: false, error };
-//   }
-// }
-
 async function getPostsByAuthor(authorId) {
   try {
-    console.log("ovo radi");
     const author = await prisma.author.findUnique({
       where: { id: authorId },
       select: {
@@ -91,14 +78,13 @@ async function getPostsByAuthor(authorId) {
         createdAt: true,
         Post: {
           include: {
-            Comment: true, // This will include all comments associated with each post
+            Comment: true,
           },
         },
       },
     });
 
     if (!author) {
-      console.log("no author");
       return null;
     }
     return author;
@@ -111,16 +97,13 @@ async function getPostsByAuthor(authorId) {
 async function getAllPosts() {
   try {
     const posts = await prisma.post.findMany({
-      // where: { published: true },
-
       include: {
         author: true,
-        Comment: true, // This will include all comments associated with each post
+        Comment: true,
       },
     });
 
     if (!posts) {
-      console.log("no posts");
       return null;
     }
 
@@ -141,7 +124,6 @@ async function getAllDrafts() {
     });
 
     if (!drafts) {
-      console.log("no posts");
       return null;
     }
     return drafts;
@@ -161,7 +143,6 @@ async function getAllDraftsByAuthor(authorId) {
     });
 
     if (!drafts) {
-      console.log("no posts");
       return null;
     }
 
@@ -185,7 +166,6 @@ async function getAllPostsByAuthor(authorId) {
     });
 
     if (!posts) {
-      console.log("no posts");
       return null;
     }
 
@@ -206,29 +186,23 @@ async function getPost(postId) {
         text: true,
         author: true,
         createdAt: true,
-        // Comment: true,
         Comment: {
-          // <--- Make sure this matches the relation name on your Post model
           include: {
-            // Include the User who made the comment (if any)
             commentByUser: {
               select: {
                 id: true,
-                username: true, // Assuming your User model has a 'name' field
-                // Add other user fields you need
+                username: true,
               },
             },
-            // Include the Author who made the comment (if any)
             commentByAuthor: {
               select: {
                 id: true,
-                username: true, // Assuming your Author model has a 'name' field
-                // Add other author fields you need
+                username: true,
               },
             },
           },
           orderBy: {
-            createdAt: "asc", // Order comments by creation date
+            createdAt: "asc",
           },
         },
       },
@@ -265,8 +239,6 @@ async function postNewPost(id, title, text, authorId, published) {
 }
 
 async function postNewComment(text, userId = null, authorId = null, parentId) {
-  console.log(userId);
-  console.log(authorId);
   if (!userId && !authorId) {
     throw new Error(
       "A comment must be associated with either a user or an author."
@@ -464,95 +436,3 @@ module.exports = {
   deletePost,
   deleteComment,
 };
-
-// async function postRootFolder(userId) {
-//   try {
-//     await prisma.folder.create({
-//       data: {
-//         title: "Root",
-//         owner: { connect: { id: userId } },
-//         // No parent => this is the root folder
-//       },
-//     });
-//     return { success: true };
-//   } catch (error) {
-//     console.error("Database error:", error);
-//     return { success: false, error };
-//   }
-// }
-
-// async function getRootFolder(userId) {
-//   try {
-//     const root = await prisma.folder.findFirst({
-//       where: {
-//         ownerId: userId,
-//         parentId: null,
-//         // No parent => this is the root folder
-//       },
-//       include: {
-//         children: true,
-//         files: true,
-//       },
-//     });
-//     console.log(root);
-//     return root;
-//   } catch (error) {
-//     console.error("Database error:", error);
-//     throw error;
-//   }
-// }
-
-// async function postNewFolder(title, ownerId, parentId = null) {
-//   try {
-//     const data = {
-//       title,
-//       owner: { connect: { id: ownerId } },
-//     };
-
-//     if (parentId) {
-//       data.parent = { connect: { id: parentId } };
-//     }
-
-//     await prisma.folder.create({ data });
-//     return { success: true };
-//   } catch (error) {
-//     console.error("Database error:", error);
-//     return { success: false, error };
-//   }
-// }
-
-// async function getFolderById(id) {
-//   try {
-//     const folder = await prisma.folder.findUnique({
-//       where: { id: id },
-//       include: { children: true, files: true },
-//     });
-//     console.log(folder);
-//     return folder;
-//   } catch (error) {
-//     console.error("Database error:", error);
-//     return { success: false, error };
-//   }
-// }
-
-// async function postNewFile(title, link, uploaderId, parentId, size) {
-//   try {
-//     const data = {
-//       title,
-//       link,
-//       uploader: { connect: { id: uploaderId } },
-//       parent: { connect: { id: parentId } },
-//       size,
-//     };
-
-//     // if (parentId) {
-//     //   data.parent = { connect: { id: parentId } };
-//     // }
-
-//     await prisma.file.create({ data });
-//     return { success: true };
-//   } catch (error) {
-//     console.error("Database error:", error);
-//     return { success: false, error };
-//   }
-// }

@@ -8,30 +8,6 @@ const lengthErr = "must be between 1 and 10 characters.";
 const passErr =
   "must be at least 8 characters long and include 1 lowercase letter, 1 uppercase letter, 1 number, and 1 symbol.";
 
-// const validateUser = [
-//   body("username")
-//     .trim()
-//     .isAlpha()
-//     .withMessage(`Username ${alphaErr}`)
-//     .isLength({ min: 1, max: 10 })
-//     .withMessage(`Username ${lengthErr}`),
-//   body("password")
-//     .isStrongPassword({
-//       minLength: 3,
-//       minLowercase: 1,
-//       minUppercase: 1,
-//       minNumbers: 1,
-//       minSymbols: 1,
-//     })
-//     .withMessage(`Password ${passErr}`),
-//   body("confirmPassword").custom((value, { req }) => {
-//     if (value !== req.body.password) {
-//       throw new Error("Passwords do not match");
-//     }
-//     return true;
-//   }),
-// ];
-
 const validateUser = [
   body("username")
     .trim()
@@ -84,8 +60,6 @@ exports.newUserCreate = [
     }
     try {
       const { username, password } = req.body;
-      console.log("ovdje stiglo");
-      //   const isAdmin = req.body.isAdmin === "on";
 
       const hashedPassword = await bcrypt.hash(password, 10);
 

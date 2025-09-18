@@ -23,7 +23,7 @@ function authenticateAuthor(req, res, next) {
       return res.status(403).json({ message: "Forbidden: Not an author" });
     }
 
-    req.user = decoded; // Pass data to route handler
+    req.user = decoded;
     next();
   } catch (err) {
     console.error("JWT verification failed", err);
@@ -45,7 +45,6 @@ dashboardRouter.post("/posts", authenticateAuthor, async (req, res) => {
 
   try {
     const post = await db.postNewPost(id, title, text, authorId, published);
-    console.log("Post created");
     res.status(201).json(post);
   } catch (error) {
     if (
@@ -76,7 +75,6 @@ dashboardRouter.put("/posts/:postId", authenticateAuthor, async (req, res) => {
 
   try {
     const post = await db.updatePost(postId, title, text, published, createdAt);
-    console.log("Post updated");
     res.status(200).json(post);
   } catch (error) {
     if (

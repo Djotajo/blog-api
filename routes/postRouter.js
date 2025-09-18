@@ -20,7 +20,7 @@ function authenticateUser(req, res, next) {
       return res.status(403).json({ message: "Forbidden: Not a user" });
     }
 
-    req.user = decoded; // Pass data to route handler
+    req.user = decoded;
     next();
   } catch (err) {
     console.error("JWT verification failed", err);
@@ -35,7 +35,6 @@ postRouter.get("/", async (req, res) => {
 });
 
 // GET POST BY ID
-
 postRouter.get("/:postId", async (req, res) => {
   const { postId } = req.params;
   const post = await db.getPost(postId);
@@ -43,7 +42,6 @@ postRouter.get("/:postId", async (req, res) => {
 });
 
 // POST NEW COMMENT
-
 postRouter.post("/:postId/comments", authenticateUser, async (req, res) => {
   const { postId } = req.params;
   const { text, userId, authorId } = req.body;
@@ -54,7 +52,6 @@ postRouter.post("/:postId/comments", authenticateUser, async (req, res) => {
 });
 
 // EDIT COMMENT
-
 postRouter.put(
   "/:postId/comments/:commentId",
   authenticateUser,
@@ -67,7 +64,6 @@ postRouter.put(
 );
 
 // DELETE COMMENT
-
 postRouter.delete(
   "/:postId/comments/:commentId",
   authenticateUser,
@@ -77,14 +73,5 @@ postRouter.delete(
     res.json(comment);
   }
 );
-
-// postRouter.get("/:authorId", async (req, res) => {
-//   const { authorId } = req.params;
-
-//   const posts = await db.getAllPostsByAuthor(authorId);
-
-//   console.log("All posts by author log");
-//   res.json(posts);
-// });
 
 module.exports = postRouter;
