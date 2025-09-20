@@ -97,6 +97,7 @@ async function getPostsByAuthor(authorId) {
 async function getAllPosts() {
   try {
     const posts = await prisma.post.findMany({
+      where: { published: true },
       include: {
         author: true,
         Comment: true,
