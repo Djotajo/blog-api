@@ -151,6 +151,18 @@ dashboardRouter.post(
   }
 );
 
+// EDIT COMMENT
+dashboardRouter.put(
+  "/:postId/comments/:commentId",
+  authenticateAuthor,
+  async (req, res) => {
+    const { postId, commentId } = req.params;
+    const { text } = req.body;
+    const comment = await db.editComment(commentId, text);
+    res.json(comment);
+  }
+);
+
 // DELETE COMMENT
 dashboardRouter.delete(
   "/posts/:postId/comments/:commentId",
